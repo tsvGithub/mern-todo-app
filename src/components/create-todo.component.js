@@ -1,15 +1,21 @@
 import React, { Component } from "react";
 import axios from "axios";
 
+//exprt to App.js Route path
 export default class CreateList extends Component {
   constructor(props) {
+    //1. calls parents constructor & passing in props
     super(props);
-
+    //---------------------------------------------
+    //7.BIND to '.this' all Methods because of accessing to the STATE Object within of all Methods
     this.onChangeTodoDescription = this.onChangeTodoDescription.bind(this);
     this.onChangeTodoResponsible = this.onChangeTodoResponsible.bind(this);
     this.onChangeTodoPriority = this.onChangeTodoPriority.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
+    // 2  ---------------------------------------------------
+    //State Object for CreateList component with default values
+    //if you need you can add many more properties
     this.state = {
       todo_description: "",
       todo_responsible: "",
@@ -17,9 +23,12 @@ export default class CreateList extends Component {
       todo_completed: false,
     };
   }
-
+  // 3 -------------------------------------------
+  //METHODS for FORM to update STATE with new values
+  //Methods take (e)events as parameters &
   onChangeTodoDescription(e) {
     this.setState({
+      //call State to update key-value parametrs with new
       todo_description: e.target.value,
     });
   }
@@ -34,23 +43,33 @@ export default class CreateList extends Component {
     });
   }
 
+  //onSubmit is called when user submits the form
   onSubmit(e) {
+    // 4
     e.preventDefault();
-
+    // 6 ----------------------------------------
+    //Console.log all Values from CreateList Component STATE
+    //  ${this.state.+ key}
     console.log(`Form submited:`);
     console.log(`Todo Description: ${this.state.todo_description}`);
     console.log(`Todo Responsible: ${this.state.todo_responsible}`);
     console.log(`Todo Priority: ${this.state.todo_priority}`);
     console.log(`Todo Completed: ${this.state.todo_completed}`);
-
+    //----------------------------------------
+    //9 create new Todo item with value coming from form &
+    //send it over HTTP post request to the back-end part
     const newTodo = {
       todo_description: this.state.todo_description,
       todo_responsible: this.state.todo_responsible,
       todo_priority: this.state.todo_priority,
       todo_completed: this.state.todo_completed,
     };
+    //9a call Axios with method POST & with 2 args:
+    //back-end URL end-point & object newTodo
+    //
     axios.post("http://localhost:4000/todos/add", newTodo).then((res) => console.log(res.data));
-
+    //----------------------------------------
+    //5 reset STATE  once the form is submitted to initial STATE
     this.setState({
       todo_description: "",
       todo_responsible: "",
@@ -58,12 +77,18 @@ export default class CreateList extends Component {
       todo_completed: false,
     });
   }
+  //------------------------------------------------------
 
+  //Create Todo Form
   render() {
+    // 8 FORM
     return (
       <div style={{ marginTop: 20 }}>
         <h3>Create New Todo</h3>
+        {/*Setting onSubmit property (attribute) to {this.onSubmit} 
+        from //4 Methods for Form... & BIND to 'this.onSubmit' //7  */}
         <form onSubmit={this.onSubmit}>
+          {/*Description: set Value attribute to corresponding STATE property & onCanhge event will update STATE */}
           <div className="form-group">
             <label>Description: </label>
             <input
@@ -73,6 +98,7 @@ export default class CreateList extends Component {
               onChange={this.onChangeTodoDescription}
             />
           </div>
+          {/*Responsible: set Value attribute to corresponding STATE property & onCanhge event will update STATE */}
           <div className="form-group">
             <label>Responsible: </label>
             <input
@@ -81,6 +107,7 @@ export default class CreateList extends Component {
               value={this.state.todo_responsible}
               onChange={this.onChangeTodoResponsible}
             />
+            {/*Priority: set Value attribute to corresponding STATE property & onCanhge event will update STATE */}
             <div className="form-group">
               <div className="form-check form-check-inline">
                 <input
@@ -92,6 +119,7 @@ export default class CreateList extends Component {
                   checked={this.state.todo_priority == "Low"}
                   onChange={this.onChangeTodoPriority}
                 />
+                {/*checked can be compared to Value attribute */}
                 <label className="form-check-label">Low</label>
               </div>
               <div className="form-check form-check-inline">
